@@ -24,6 +24,8 @@ jobs:
       BETTER_AUTH_URL: ${{ secrets.BETTER_AUTH_URL }}
       GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
       GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      AUTH_URL_LIVE: ${{ secrets.AUTH_URL_LIVE }}
+      AUTH_URL_DEV: ${{ secrets.AUTH_URL_DEV }}
 
     steps:
       - uses: actions/checkout@v4
