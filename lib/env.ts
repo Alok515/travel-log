@@ -9,6 +9,8 @@ const EnvSchema = z.object({
   BETTER_AUTH_URL: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
+  AUTH_URL_LIVE: z.string(),
+  AUTH_URL_DEV: z.string(),
   // JWT_SECRET: z.string(),
   // JWT_EXPIRES_IN: z.string()
 });

@@ -8,6 +8,7 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "sqlite",
   }),
+  baseURL: env.NODE_ENV === "development" ? env.AUTH_URL_DEV : env.AUTH_URL_LIVE,
   socialProviders: {
     google: {
       prompt: "select_account",
