@@ -8,6 +8,27 @@
       "when": 1764501288334,
       "tag": "0000_breezy_venom",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1764517905258,
+      "tag": "0001_secret_viper",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1764518008035,
+      "tag": "0002_handy_sheva_callister",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1764518139008,
+      "tag": "0003_fast_invisible_woman",
+      "breakpoints": true
     }
   ]
 }
