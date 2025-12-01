@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { useAuth } from "~~/stores/auth";
 
+const isClient = ref(false);
 const authStore = useAuth();
+
+const hasUser = computed(() => isClient.value && !authStore.isLoading && authStore.user);
+
+onMounted(() => {
+  isClient.value = true;
+});
 </script>
 
 <template>
-  <div v-if="!authStore.isLoading && authStore.user">
+  <div v-if="hasUser">
     <details class="dropdown dropdown-end">
       <summary class="btn m-1">
         <div v-if="authStore.user?.image" class="avatar">
@@ -16,7 +23,7 @@ const authStore = useAuth();
             >
           </div>
         </div>
-        {{ authStore.user.name }}
+        {{ authStore?.user?.name || '' }}
       </summary>
       <ul class="menu dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-sm">
         <li>
