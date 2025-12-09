@@ -4,6 +4,7 @@ import type { FetchError } from "ofetch";
 import { locationInsertSchema } from "~~/lib/db/schema";
 
 const isLoading = ref(false);
+const isSubmitted = ref(false);
 
 const { handleSubmit, errors, meta, setErrors } = useForm({
   validationSchema: toTypedSchema(locationInsertSchema),
@@ -12,11 +13,12 @@ const { handleSubmit, errors, meta, setErrors } = useForm({
 const onSubmit = handleSubmit(async (values) => {
   try {
     isLoading.value = true;
-    const inserted = await $fetch("/api/locations", {
+    await $fetch("/api/locations", {
       method: "POST",
       body: values,
     });
-    console.log(inserted);
+    isSubmitted.value = true;
+    navigateTo("/dashboard");
   }
   catch (e) {
     const error = e as FetchError;
@@ -32,7 +34,7 @@ const onSubmit = handleSubmit(async (values) => {
 const router = useRouter();
 
 onBeforeRouteLeave(() => {
-  if (!meta.value.dirty)
+  if (isSubmitted.value || !meta.value.dirty)
     return true;
 
   // eslint-disable-next-line no-alert

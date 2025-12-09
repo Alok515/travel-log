@@ -1,4 +1,5 @@
-import { locationInsertSchema } from "~~/lib/db/schema";
+import db from "~~/lib/db";
+import { location, locationInsertSchema } from "~~/lib/db/schema";
 
 export default defineEventHandler(async (event) => {
   if (!event.context.user) {
@@ -23,5 +24,11 @@ export default defineEventHandler(async (event) => {
     }));
   }
 
-  return parsedBody.data;
+  const [created] = await db.insert(location).values({
+    ...parsedBody.data,
+    slug: parsedBody.data.name.toLowerCase().replace(/ /g, "-"),
+    userId: event.context.user.id,
+  }).returning();
+
+  return created;
 });

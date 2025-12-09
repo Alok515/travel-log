@@ -1,0 +1,1 @@
+ALTER TABLE `location` ADD `discription` text;
