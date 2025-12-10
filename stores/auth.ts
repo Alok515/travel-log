@@ -14,15 +14,28 @@ export const useAuth = defineStore("auth", () => {
   const user = computed(() => session.value?.data?.user);
 
   async function signIn() {
+    const { csrf } = useCsrf();
+    const headers = new Headers();
+    headers.append("csrf-token", csrf);
     await authClient.signIn.social({
       provider: "google",
       callbackURL: "/dashboard",
       errorCallbackURL: "/dashboard/error",
+      fetchOptions: {
+        headers,
+      },
     });
   }
 
   async function signOut() {
-    await authClient.signOut();
+    const { csrf } = useCsrf();
+    const headers = new Headers();
+    headers.append("csrf-token", csrf);
+    await authClient.signOut({
+      fetchOptions: {
+        headers,
+      },
+    });
     navigateTo("/");
   }
 

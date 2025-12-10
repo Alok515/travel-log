@@ -3,6 +3,8 @@ import type { FetchError } from "ofetch";
 
 import { locationInsertSchema } from "~~/lib/db/schema";
 
+const { $csrfFetch } = useNuxtApp();
+
 const isLoading = ref(false);
 const isSubmitted = ref(false);
 
@@ -13,7 +15,7 @@ const { handleSubmit, errors, meta, setErrors } = useForm({
 const onSubmit = handleSubmit(async (values) => {
   try {
     isLoading.value = true;
-    await $fetch("/api/locations", {
+    await $csrfFetch("/api/locations", {
       method: "POST",
       body: values,
     });
