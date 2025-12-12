@@ -1,8 +1,7 @@
 import type { DrizzleError } from "drizzle-orm";
 
-import db from "~~/lib/db";
-import { location, locationInsertSchema } from "~~/lib/db/schema";
-import { and, eq } from "drizzle-orm";
+import { findLocationByName, getUniqueSlug, insertLocation } from "~~/lib/db/queris/location";
+import { locationInsertSchema } from "~~/lib/db/schema";
 import slugGenrator from "slug";
 
 export default defineEventHandler(async (event) => {
@@ -28,9 +27,7 @@ export default defineEventHandler(async (event) => {
     }));
   }
 
-  const existingLocation = await db.query.location.findFirst({
-    where: and(eq(location.name, parsedBody.data.name), eq(location.userId, event.context.user.id)),
-  });
+  const existingLocation = await findLocationByName(parsedBody.data, event.context.user.id);
 
   if (existingLocation) {
     return sendError(event, createError({
@@ -39,22 +36,10 @@ export default defineEventHandler(async (event) => {
     }));
   }
 
-  let slug = slugGenrator(parsedBody.data.name);
-  const existing = await db.query.location.findFirst({
-    where: eq(location.slug, slug),
-  });
-  if (existing) {
-    const rand5CharId = Math.floor(Math.random() * 100000).toString().padStart(5, "0");
-    slug = `${slug}-${rand5CharId}`;
-  }
+  const slug = await getUniqueSlug(slugGenrator(parsedBody.data.name));
 
   try {
-    const [created] = await db.insert(location).values({
-      ...parsedBody.data,
-      slug,
-      userId: event.context.user.id,
-    }).returning();
-    return created;
+    return insertLocation(parsedBody.data, slug, event.context.user.id);
   }
   catch (e) {
     const error = e as DrizzleError;

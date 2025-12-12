@@ -28,7 +28,7 @@ const onSubmit = handleSubmit(async (values) => {
     if (error.data?.data) {
       setErrors(error.data.data);
     }
-    errorToast.value = error.statusMessage || "Something went wrong";
+    errorToast.value = error.data?.statusMessage || error.statusMessage || "Something went wrong";
   }
   finally {
     isLoading.value = false;
