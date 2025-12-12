@@ -7,6 +7,7 @@ const { $csrfFetch } = useNuxtApp();
 
 const isLoading = ref(false);
 const isSubmitted = ref(false);
+const errorToast = ref("");
 
 const { handleSubmit, errors, meta, setErrors } = useForm({
   validationSchema: toTypedSchema(locationInsertSchema),
@@ -27,6 +28,7 @@ const onSubmit = handleSubmit(async (values) => {
     if (error.data?.data) {
       setErrors(error.data.data);
     }
+    errorToast.value = error.data?.statusMessage || error.statusMessage || "Something went wrong";
   }
   finally {
     isLoading.value = false;
@@ -60,7 +62,7 @@ onBeforeRouteLeave(() => {
     </div>
     <form class="flex flex-col gap-2" @submit.prevent="onSubmit">
       <AppFormField
-        legend="What is your name?"
+        legend="Location Name ?"
         name="name"
         type="text"
         :error="errors.name"
@@ -113,5 +115,11 @@ onBeforeRouteLeave(() => {
         </button>
       </div>
     </form>
+    <AppToast
+      v-if="errorToast"
+      :error-toast="errorToast"
+      type="error"
+      @remove="errorToast = ''"
+    />
   </div>
 </template>

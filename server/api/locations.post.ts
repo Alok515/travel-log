@@ -1,5 +1,8 @@
-import db from "~~/lib/db";
-import { location, locationInsertSchema } from "~~/lib/db/schema";
+import type { DrizzleError } from "drizzle-orm";
+
+import { findLocationByName, getUniqueSlug, insertLocation } from "~~/lib/db/queris/location";
+import { locationInsertSchema } from "~~/lib/db/schema";
+import slugGenrator from "slug";
 
 export default defineEventHandler(async (event) => {
   if (!event.context.user) {
@@ -24,11 +27,27 @@ export default defineEventHandler(async (event) => {
     }));
   }
 
-  const [created] = await db.insert(location).values({
-    ...parsedBody.data,
-    slug: parsedBody.data.name.toLowerCase().replace(/ /g, "-"),
-    userId: event.context.user.id,
-  }).returning();
+  const existingLocation = await findLocationByName(parsedBody.data, event.context.user.id);
 
-  return created;
+  if (existingLocation) {
+    return sendError(event, createError({
+      statusCode: 409,
+      statusMessage: "Location already exists!",
+    }));
+  }
+
+  const slug = await getUniqueSlug(slugGenrator(parsedBody.data.name));
+
+  try {
+    return insertLocation(parsedBody.data, slug, event.context.user.id);
+  }
+  catch (e) {
+    const error = e as DrizzleError;
+    if (error.message.includes("Failed query: insert")) {
+      return sendError(event, createError({
+        statusCode: 409,
+        statusMessage: "Slug must be unique (location already exists)",
+      }));
+    }
+  }
 });
