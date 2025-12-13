@@ -17,11 +17,11 @@ onMounted(() => {
     <div v-if="status === 'pending'">
       <span class="loading loading-spinner loading-lg" />
     </div>
-    <div v-else-if="locations && locations.length" class="flex flex-wrap gap-2 mt-4">
+    <div v-else-if="locations && locations.length" class="flex flex-nowrap gap-2 mt-4 overflow-auto">
       <div
         v-for="location in locations"
         :key="location.id"
-        class="card bg-base-400 shadow-xl w-72 h-40"
+        class="card bg-base-400 shadow-xl w-72 h-40 shrink-0"
       >
         <div class="card-body">
           <div class="card-title">

@@ -1,5 +1,6 @@
 import type { SideBarItem } from "~~/stores/sidebar";
 
+import { useMapStore } from "~~/stores/map";
 import { useSideBarStore } from "~~/stores/sidebar";
 
 export const useLocations = defineStore("locations", () => {
@@ -8,8 +9,9 @@ export const useLocations = defineStore("locations", () => {
   });
 
   const sideBarStore = useSideBarStore();
+  const mapStore = useMapStore();
 
-  watchEffect(() => {
+  effect(() => {
     if (data.value && data.value.length) {
       sideBarStore.sideBarItems = data.value.map((item): SideBarItem => {
         return {
@@ -17,6 +19,14 @@ export const useLocations = defineStore("locations", () => {
           id: `location-${item.id}`,
           icon: "tabler:pin",
           path: "#",
+        };
+      });
+      mapStore.MapPoints = data.value.map((item) => {
+        return {
+          id: item.id,
+          label: item.name,
+          lat: item.lat,
+          lng: item.lng,
         };
       });
     }
