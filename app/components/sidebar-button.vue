@@ -46,16 +46,16 @@ const onBeforeEnter = () => isTextVisible.value = true;
 
 <style scoped>
 .hide-enter-active {
-  animation: grow 0.5s;
+  animation: grow 0.4s;
 }
 
 .hide-leave-active {
-  animation: grow 0.5s reverse;
+  animation: grow 0.4s reverse;
 }
 
 .hide-enter-active,
 .hide-leave-active {
-  transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.4s ease-in-out;
   white-space: nowrap;
 }
 
