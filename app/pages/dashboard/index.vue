@@ -1,6 +1,14 @@
 <script setup lang="ts">
-const { data, status } = await useFetch("/api/locations", {
-  lazy: true,
+import { useLocations } from "~~/stores/locations";
+import { useMapStore } from "~~/stores/map";
+import { isPointSelected } from "~~/utils/map-points";
+
+const locationsStore = useLocations();
+const mapStore = useMapStore();
+const { locations, status } = storeToRefs(locationsStore);
+
+onMounted(() => {
+  locationsStore.refresh();
 });
 </script>
 
@@ -12,11 +20,17 @@ const { data, status } = await useFetch("/api/locations", {
     <div v-if="status === 'pending'">
       <span class="loading loading-spinner loading-lg" />
     </div>
-    <div v-else-if="data" class="flex flex-wrap gap-2 mt-4">
+    <div v-else-if="locations && locations.length" class="flex flex-nowrap gap-2 mt-4 overflow-auto">
       <div
-        v-for="location in data"
+        v-for="location in locations"
         :key="location.id"
-        class="card bg-base-400 shadow-xl w-72 h-40"
+        class="card bg-base-300 shadow-xl w-72 h-40 border-2 shrink-0 mb-2 hover:cursor-pointer"
+        :class="{
+          'border-accent': isPointSelected(location, mapStore.selectedPoint),
+          'border-transparent': !isPointSelected(location, mapStore.selectedPoint),
+        }"
+        @mouseenter="mapStore.selectedPoint = location"
+        @mouseleave="mapStore.selectedPoint = null"
       >
         <div class="card-body">
           <div class="card-title">

@@ -1,5 +1,16 @@
 <script setup lang="ts">
+import { useLocations } from "~~/stores/locations";
+import { useMapStore } from "~~/stores/map";
+import { useSideBarStore } from "~~/stores/sidebar";
+import { isPointSelected } from "~~/utils/map-points";
+
+const route = useRoute();
+
 const isSideBarOpen = ref(true);
+const locationsStore = useLocations();
+const mapStore = useMapStore();
+
+const sideBarStore = useSideBarStore();
 
 function toggleSideBar() {
   isSideBarOpen.value = !isSideBarOpen.value;
@@ -8,12 +19,15 @@ function toggleSideBar() {
 
 onMounted(() => {
   isSideBarOpen.value = localStorage.getItem("isSideBarOpen") === "true";
+  if (route.path !== "/dashboard") {
+    locationsStore.refresh();
+  }
 });
 </script>
 
 <template>
   <div class="flex-1 flex">
-    <div class="bg-base-100 transition-all duration-600" :class="[isSideBarOpen ? 'w-64' : 'w-16']">
+    <div class="bg-base-100 transition-all duration-600 shrink-0" :class="[isSideBarOpen ? 'w-64' : 'w-16']">
       <div
         class="flex hover:cursor-pointer hover:bg-base-200 p-2"
         :class="[isSideBarOpen ? 'justify-end' : 'justify-center']"
@@ -34,6 +48,24 @@ onMounted(() => {
           path="/dashboard/add"
           :show-label="isSideBarOpen"
         />
+
+        <div v-if="sideBarStore.isLoading || sideBarStore.sideBarItems.length" class="divider" />
+        <div v-if="sideBarStore.isLoading" class="px-4">
+          <div class="skeleton h-8 w-full" />
+        </div>
+        <div v-if="!sideBarStore.isLoading && sideBarStore.sideBarItems.length" class="flex flex-col gap-0.5">
+          <SidebarButton
+            v-for="sideItem in sideBarStore.sideBarItems"
+            :key="sideItem.id"
+            :label="sideItem.label"
+            :icon="sideItem.icon"
+            :path="sideItem.path"
+            :show-label="isSideBarOpen"
+            :icon-color="isPointSelected(mapStore.selectedPoint, sideItem.location) ? 'text-accent' : undefined"
+            @mouseenter="mapStore.selectedPoint = sideItem.location ?? null"
+            @mouseleave="mapStore.selectedPoint = null"
+          />
+        </div>
         <div class="divider" />
         <SidebarButton
           label="Sign Out"
@@ -43,8 +75,11 @@ onMounted(() => {
         />
       </div>
     </div>
-    <div class="flex-1">
-      <NuxtPage />
+    <div class="flex-1 overflow-auto bg-base-200">
+      <div class="flex size-full" :class="{ 'flex-col': route.path !== '/dashboard/add' }">
+        <NuxtPage />
+        <AppMap class="flex-1" />
+      </div>
     </div>
   </div>
 </template>
