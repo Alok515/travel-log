@@ -51,7 +51,7 @@ onBeforeRouteLeave(() => {
 </script>
 
 <template>
-  <div class="container max-w-md mx-auto mt-4">
+  <div class="container max-w-md mx-auto mt-4 p-4">
     <div class="mb-4">
       <h1 class="text-lg">
         Add Location

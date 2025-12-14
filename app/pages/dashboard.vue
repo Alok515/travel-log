@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { useLocations } from "~~/stores/locations";
+import { useMapStore } from "~~/stores/map";
 import { useSideBarStore } from "~~/stores/sidebar";
+import { isPointSelected } from "~~/utils/map-points";
 
 const route = useRoute();
 
 const isSideBarOpen = ref(true);
 const locationsStore = useLocations();
+const mapStore = useMapStore();
 
 const sideBarStore = useSideBarStore();
 
@@ -58,6 +61,9 @@ onMounted(() => {
             :icon="sideItem.icon"
             :path="sideItem.path"
             :show-label="isSideBarOpen"
+            :icon-color="isPointSelected(mapStore.selectedPoint, sideItem.location) ? 'text-accent' : undefined"
+            @mouseenter="mapStore.selectedPoint = sideItem.location ?? null"
+            @mouseleave="mapStore.selectedPoint = null"
           />
         </div>
         <div class="divider" />
@@ -69,8 +75,8 @@ onMounted(() => {
         />
       </div>
     </div>
-    <div class="flex-1 overflow-auto">
-      <div class="flex flex-col size-full">
+    <div class="flex-1 overflow-auto bg-base-200">
+      <div class="flex size-full" :class="{ 'flex-col': route.path !== '/dashboard/add' }">
         <NuxtPage />
         <AppMap class="flex-1" />
       </div>

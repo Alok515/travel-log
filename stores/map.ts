@@ -5,6 +5,8 @@ import { ref } from "vue";
 
 export const useMapStore = defineStore("map", () => {
   const MapPoints = ref<MapPoint[]>([]);
+  const selectedPoint = ref<MapPoint | null>(null);
+
   async function init() {
     const { useMap } = await import("@indoorequal/vue-maplibre-gl");
     const { LngLatBounds } = await import("maplibre-gl");
@@ -25,5 +27,6 @@ export const useMapStore = defineStore("map", () => {
       });
     });
   }
-  return { MapPoints, init };
+
+  return { MapPoints, init, selectedPoint };
 });

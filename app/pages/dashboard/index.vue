@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { useLocations } from "~~/stores/locations";
+import { useMapStore } from "~~/stores/map";
+import { isPointSelected } from "~~/utils/map-points";
 
 const locationsStore = useLocations();
+const mapStore = useMapStore();
 const { locations, status } = storeToRefs(locationsStore);
 
 onMounted(() => {
@@ -21,7 +24,13 @@ onMounted(() => {
       <div
         v-for="location in locations"
         :key="location.id"
-        class="card bg-base-400 shadow-xl w-72 h-40 shrink-0"
+        class="card bg-base-300 shadow-xl w-72 h-40 border-2 shrink-0 mb-2 hover:cursor-pointer"
+        :class="{
+          'border-accent': isPointSelected(location, mapStore.selectedPoint),
+          'border-transparent': !isPointSelected(location, mapStore.selectedPoint),
+        }"
+        @mouseenter="mapStore.selectedPoint = location"
+        @mouseleave="mapStore.selectedPoint = null"
       >
         <div class="card-body">
           <div class="card-title">

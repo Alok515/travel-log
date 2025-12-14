@@ -1,3 +1,5 @@
+import type { MapPoint } from "~~/server/types";
+
 import { defineStore } from "pinia";
 
 export type SideBarItem = {
@@ -5,6 +7,7 @@ export type SideBarItem = {
   icon: string;
   id: string;
   path: string;
+  location?: MapPoint | null;
 };
 
 export const useSideBarStore = defineStore("sideBarItems", () => {

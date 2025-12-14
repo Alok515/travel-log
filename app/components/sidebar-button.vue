@@ -1,10 +1,11 @@
 <script setup lang="ts">
-const props = defineProps({
-  label: String,
-  icon: String,
-  path: String,
-  showLabel: Boolean,
-});
+const props = defineProps<{
+  label: string;
+  icon: string;
+  path: string;
+  showLabel: boolean;
+  iconColor?: "text-accent" | "text-primary" | "text-secondary";
+}>();
 
 const route = useRoute();
 
@@ -32,6 +33,7 @@ const onBeforeEnter = () => isTextVisible.value = true;
         v-if="props.icon"
         :name="props.icon"
         size="18"
+        :class="props.iconColor"
       />
       <Transition
         name="hide"
