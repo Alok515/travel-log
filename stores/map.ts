@@ -6,6 +6,7 @@ import { ref } from "vue";
 export const useMapStore = defineStore("map", () => {
   const MapPoints = ref<MapPoint[]>([]);
   const selectedPoint = ref<MapPoint | null>(null);
+  const addedPoint = ref<MapPoint | null>(null);
 
   async function init() {
     const { useMap } = await import("@indoorequal/vue-maplibre-gl");
@@ -26,7 +27,19 @@ export const useMapStore = defineStore("map", () => {
         padding: 50,
       });
     });
+
+    watch(addedPoint, (newVal, oldVal) => {
+      if (newVal && !oldVal) {
+        map.map?.flyTo({
+          center: [newVal.lng, newVal.lat],
+          zoom: 6,
+          speed: 1.5,
+        });
+      }
+    }, {
+      immediate: true,
+    });
   }
 
-  return { MapPoints, init, selectedPoint };
+  return { MapPoints, init, selectedPoint, addedPoint };
 });
