@@ -94,6 +94,15 @@ onMounted(() => {
             <p v-if="point.discription" class="text-xs">
               {{ point.discription }}
             </p>
+            <div class="flex justify-end mt-4">
+              <NuxtLink
+                v-if="point.to"
+                :to="point.to"
+                class="btn btn-sm btn-outline"
+              >
+                {{ point.toLebal }}
+              </NuxtLink>
+            </div>
           </div>
         </MglPopup>
       </MglMarker>
