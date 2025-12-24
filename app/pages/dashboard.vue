@@ -59,10 +59,10 @@ onMounted(() => {
             :key="sideItem.id"
             :label="sideItem.label"
             :icon="sideItem.icon"
-            :path="sideItem.path"
+            :to="sideItem.to"
             :show-label="isSideBarOpen"
-            :icon-color="isPointSelected(mapStore.selectedPoint, sideItem.location) ? 'text-accent' : undefined"
-            @mouseenter="mapStore.selectedPoint = sideItem.location ?? null"
+            :icon-color="isPointSelected(mapStore.selectedPoint, sideItem.mapPoint) ? 'text-accent' : undefined"
+            @mouseenter="mapStore.selectedPoint = sideItem.mapPoint ?? null"
             @mouseleave="mapStore.selectedPoint = null"
           />
         </div>

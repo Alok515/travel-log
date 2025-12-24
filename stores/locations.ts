@@ -1,7 +1,10 @@
+import type { MapPoint } from "~~/server/types";
 import type { SideBarItem } from "~~/stores/sidebar";
 
 import { useMapStore } from "~~/stores/map";
 import { useSideBarStore } from "~~/stores/sidebar";
+import { createMapPointFromLocation } from "~~/utils/map-points";
+import { defineStore } from "pinia";
 
 export const useLocations = defineStore("locations", () => {
   const { data, status, refresh } = useFetch("/api/locations", {
@@ -13,16 +16,21 @@ export const useLocations = defineStore("locations", () => {
 
   effect(() => {
     if (data.value && data.value.length) {
-      sideBarStore.sideBarItems = data.value.map((item): SideBarItem => {
-        return {
-          label: item.name,
-          id: `location-${item.id}`,
+      const mapPoints: MapPoint[] = [];
+      const sideBarItems: SideBarItem[] = [];
+      data.value.forEach((location) => {
+        const mapPoint = createMapPointFromLocation(location);
+        mapPoints.push(mapPoint);
+        sideBarItems.push({
+          label: location.name,
+          id: `location-${location.id}`,
           icon: "tabler:pin",
-          path: "#",
-          location: item,
-        };
+          to: { name: "dashboard-locations-slug", params: { slug: location.slug } },
+          mapPoint,
+        });
       });
-      mapStore.MapPoints = data.value;
+      sideBarStore.sideBarItems = sideBarItems;
+      mapStore.MapPoints = mapPoints;
     }
     sideBarStore.isLoading = status.value === "pending";
   });
